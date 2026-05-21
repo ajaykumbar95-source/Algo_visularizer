@@ -23,7 +23,36 @@ A high-performance, interactive algorithm visualization platform designed to hel
 - **Admin Dashboard**: Comprehensive management interface for administrators to oversee users and their activity.
 - **Global History**: Track and revisit previous algorithm executions for comparative learning.
 
-## 🛠️ Technology Stack
+## 🛠️ Technology Stackflowchart TD
+  U[User] -->|selects algorithm / inputs data| F[Frontend React App]
+  F -->|POST /api/trace
+  {algorithmId, input}| S[Backend Express API]
+  S -->|calls| A[Trace Engine]
+  A -->|generates JSON step trace| S
+  S -->|returns trace data| F
+  F -->|renders visualization
+  {steps, pseudocode, state}| V[Sorting/Graph Visualizer]
+  F -->|POST /api/auth/login
+  {credentials}| S
+  S -->|verify JWT / bcrypt| DB[Database / Prisma]
+  S -->|issue JWT| F
+  F -->|GET /api/history| S
+  S -->|fetch history| DB
+  DB -->|history records| S
+  S -->|return history| F
+  subgraph Frontend
+    F
+    V
+  end
+  subgraph Backend
+    S
+    A
+  end
+  subgraph Data Layer
+    DB
+  end
+  classDef service fill:#f9f,stroke:#333,stroke-width:1px;
+  class F,S,A,DB service;
 
 | Component | Technology |
 | :--- | :--- |
@@ -44,6 +73,15 @@ The laboratory was developed using an **Agile/Iterative** approach to ensure hig
 ### Prerequisites
 - Node.js (v18+)
 - npm or yarn
+### 🔑 Environment Variables
+
+The application requires several environment variables to be set up. A template is provided in [.env.example](file:///Users/shree/Desktop/algo_visualiser/.env.example).
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `PORT` | The port the backend server will run on | `5001` |
+| `JWT_SECRET` | Secret key for signing JSON Web Tokens | `your-secret-key` |
+| `DATABASE_URL` | Prisma database connection string | `file:../dev.db` |
 
 ### Installation
 
@@ -53,17 +91,24 @@ The laboratory was developed using an **Agile/Iterative** approach to ensure hig
    cd algo_visualiser
    ```
 
-2. **Setup the Backend**
+2. **Setup Environment Files**
+   Copy the example environment file to the `server` and `database` directories:
+   ```bash
+   cp .env.example server/.env
+   cp .env.example database/.env
+   ```
+   *Note: Ensure `DATABASE_URL` in `database/.env` points correctly to your database file.*
+
+3. **Setup the Backend**
    ```bash
    cd server
    npm install
-   # Create a .env file based on .env.example
    npx prisma db push
    npx prisma generate
    npm run dev
    ```
 
-3. **Setup the Frontend**
+4. **Setup the Frontend**
    ```bash
    cd client
    npm install
