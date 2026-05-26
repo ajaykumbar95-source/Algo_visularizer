@@ -1,46 +1,189 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root {
+  /* Default: Midnight */
+  --color-primary: 99 102 241;
+  --color-primary-dark: 79 70 229;
+  --color-primary-light: 129 140 248;
+  --color-secondary: 236 72 153;
+  --color-secondary-dark: 219 39 119;
+  --color-secondary-light: 244 114 182;
+  --color-accent: 6 182 212;
+  --color-background: 2 6 23;
+  --color-background-light: 15 23 42;
+  --color-background-lighter: 30 41 59;
+  --mesh-opacity: 0.15;
+}
+
+[data-theme='cyberpunk'] {
+  --color-primary: 245 158 11;
+  --color-primary-dark: 217 119 6;
+  --color-primary-light: 251 191 36;
+  --color-secondary: 139 92 246;
+  --color-secondary-dark: 124 58 237;
+  --color-secondary-light: 167 139 250;
+  --color-accent: 236 72 153;
+  --color-background: 12 10 9;
+  --color-background-light: 28 25 23;
+  --color-background-lighter: 41 37 36;
+  --mesh-opacity: 0.2;
+}
+
+[data-theme='forest'] {
+  --color-primary: 16 185 129;
+  --color-primary-dark: 5 150 105;
+  --color-primary-light: 52 211 153;
+  --color-secondary: 101 163 13;
+  --color-secondary-dark: 77 124 15;
+  --color-secondary-light: 132 204 22;
+  --color-accent: 234 179 8;
+  --color-background: 2 12 10;
+  --color-background-light: 5 26 21;
+  --color-background-lighter: 10 41 33;
+  --mesh-opacity: 0.1;
+}
+
+[data-theme='deepsea'] {
+  --color-primary: 14 165 233;
+  --color-primary-dark: 2 132 199;
+  --color-primary-light: 56 189 248;
+  --color-secondary: 79 70 229;
+  --color-secondary-dark: 67 56 202;
+  --color-secondary-light: 99 102 241;
+  --color-accent: 20 184 166;
+  --color-background: 2 10 23;
+  --color-background-light: 5 18 36;
+  --color-background-lighter: 8 26 51;
+  --mesh-opacity: 0.15;
+}
 
 @layer base {
   body {
-    @apply bg-background text-slate-200 antialiased overflow-hidden;
+    @apply bg-background text-slate-100 antialiased overflow-hidden selection:bg-primary/30 selection:text-white;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Smooth layout transitions */
+  * {
+    @apply transition-all duration-300;
   }
 }
 
 @layer components {
+  .glass {
+    @apply bg-white/10 backdrop-blur-2xl border border-white/20 shadow-glass;
+  }
+
+  .glass-dark {
+    @apply bg-black/60 backdrop-blur-3xl border border-white/10 shadow-2xl;
+  }
+
+  .glass-card {
+    @apply bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/[0.08] transition-all duration-300;
+  }
+  
   .panel-blur {
-    @apply bg-background-light/80 backdrop-blur-md border border-background-lighter/50;
+    @apply bg-slate-900/60 backdrop-blur-2xl border border-white/10;
   }
   
   .sidebar-item {
-    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 cursor-pointer text-slate-400 hover:text-white hover:bg-background-lighter;
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 cursor-pointer text-slate-300 hover:text-white hover:bg-white/10 hover:translate-x-1;
   }
   
   .sidebar-item-active {
-    @apply text-white bg-primary/20 border border-primary/30 shadow-sm shadow-primary/10;
+    @apply text-white bg-primary/30 border border-primary/50 shadow-lg shadow-primary/30 translate-x-1 font-bold;
   }
 
   .btn-primary {
-    @apply px-4 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white font-black transition-all duration-300 shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 active:translate-y-0;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 rounded-lg bg-background-lighter hover:bg-slate-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold transition-all duration-300 border border-white/20 hover:border-white/30;
+  }
+
+  .input-field {
+    @apply bg-white/[0.08] border border-white/20 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary/60 transition-all duration-300 placeholder:text-slate-400;
   }
 }
 
-/* Custom scrollbar for dark mode */
+/* Background Pattern Containers */
+.bg-pattern-container {
+  background-color: rgb(var(--color-background));
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.bg-pattern-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+}
+
+/* Mesh Pattern */
+[data-bg='mesh'] .bg-pattern-container::before {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(var(--color-primary), var(--mesh-opacity)) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(var(--color-secondary), calc(var(--mesh-opacity) * 0.7)) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(var(--color-accent), calc(var(--mesh-opacity) * 0.7)) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(var(--color-primary), calc(var(--mesh-opacity) * 0.7)) 0px, transparent 50%);
+}
+
+/* Grid Pattern */
+[data-bg='grid'] .bg-pattern-container::before {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  mask-image: radial-gradient(circle at center, black, transparent 90%);
+}
+
+/* Dots Pattern */
+[data-bg='dots'] .bg-pattern-container::before {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
+  background-size: 32px 32px;
+}
+
+/* Solid Pattern - No extra styles needed as background-color is set on container */
+[data-bg='solid'] .bg-pattern-container::before {
+  opacity: 0;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-background;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-background-lighter rounded-full hover:bg-slate-600;
+  @apply bg-white/20 rounded-full hover:bg-white/40 transition-colors;
 }

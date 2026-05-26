@@ -1,58 +1,80 @@
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import prisma from '../db.js';
-import type { AuthRequest } from '../middleware/auth.js';
+import logger from '../utils/logger.js';
+import type { AuthRequest } from '../types/index.js';
 
 export const getHistory = async (req: AuthRequest, res: Response): Promise<void> => {
-  const userId = req.user?.userId;
-
-  if (!userId) {
-    res.status(401).json({ error: 'Unauthorized' });
+  if (!req.user) {
+    res.status(401).json({ error: 'Authentication required' });
     return;
   }
 
   try {
     const history = await prisma.history.findMany({
-      where: { userId },
+      where: { userId: req.user.id },
       orderBy: { createdAt: 'desc' },
-      take: 20
     });
 
-    res.status(200).json(history.map((h: any) => ({
-      ...h,
-      inputData: JSON.parse(h.inputData)
-    })));
+    res.json({ history });
   } catch (error) {
-    console.error('Get history error details:', error);
-    res.status(500).json({ error: 'Internal server error', details: error instanceof Error ? error.message : String(error) });
+    logger.error({ error, userId: req.user.id }, 'Error fetching history');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-export const saveHistory = async (req: AuthRequest, res: Response): Promise<void> => {
-  const userId = req.user?.userId;
-  const { algorithmId, inputData } = req.body;
-
-  if (!userId) {
-    res.status(401).json({ error: 'Unauthorized' });
+export const deleteHistoryItem = async (req: AuthRequest, res: Response): Promise<void> => {
+  if (!req.user) {
+    res.status(401).json({ error: 'Authentication required' });
     return;
   }
 
-  if (!algorithmId || !inputData) {
-    res.status(400).json({ error: 'Missing algorithmId or inputData' });
+  const { id } = req.params;
+  if (!id || typeof id !== 'string') {
+    res.status(400).json({ error: 'Invalid ID parameter' });
     return;
   }
 
   try {
-    const history = await prisma.history.create({
-      data: {
-        userId,
-        algorithmId,
-        inputData: JSON.stringify(inputData)
-      }
+    // Verify item belongs to user before deletion
+    const item = await prisma.history.findUnique({
+      where: { id },
     });
 
-    res.status(201).json(history);
+    if (!item) {
+      res.status(404).json({ error: 'History item not found' });
+      return;
+    }
+
+    if (item.userId !== req.user.id) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+
+    await prisma.history.delete({
+      where: { id },
+    });
+
+    res.json({ message: 'History item deleted' });
   } catch (error) {
-    console.error('Save history error details:', error);
-    res.status(500).json({ error: 'Internal server error', details: error instanceof Error ? error.message : String(error) });
+    logger.error({ error, itemId: id, userId: req.user.id }, 'Error deleting history item');
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const clearHistory = async (req: AuthRequest, res: Response): Promise<void> => {
+  if (!req.user) {
+    res.status(401).json({ error: 'Authentication required' });
+    return;
+  }
+
+  try {
+    await prisma.history.deleteMany({
+      where: { userId: req.user.id },
+    });
+
+    res.json({ message: 'History cleared successfully' });
+  } catch (error) {
+    logger.error({ error, userId: req.user.id }, 'Error clearing history');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };

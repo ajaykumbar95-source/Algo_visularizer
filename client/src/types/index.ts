@@ -31,7 +31,7 @@ export interface Step {
   
   // Common
   activeLine: number;
-  variables: Record<string, any>;
+  variables: Record<string, unknown>;
   description: string;
 }
 
@@ -39,3 +39,19 @@ export interface TraceResponse {
   algorithmId: string;
   steps: Step[];
 }
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface HistoryItem {
+  id: string;
+  userId: string;
+  algorithmId: string;
+  inputData: string;
+  createdAt: string;
+}
+

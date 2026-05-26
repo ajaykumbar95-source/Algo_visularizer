@@ -6,6 +6,18 @@ interface Edge {
   weight: number;
 }
 
+/**
+ * Generates an execution trace for the Bellman-Ford algorithm.
+ * 
+ * @param adjList - The adjacency list of the weighted graph.
+ * @param nodes - An array of all node labels in the graph.
+ * @param startNode - The starting node for the algorithm.
+ * @returns An array of TraceStep objects representing the algorithm's state at each step.
+ * 
+ * @complexity
+ * - Time: O(V * E).
+ * - Space: O(V) auxiliary.
+ */
 export function getBellmanFordTrace(adjList: Record<string, { to: string; weight: number }[]>, nodes: string[], startNode: string): TraceStep[] {
   const steps: TraceStep[] = [];
   const distances: Record<string, number | string> = {};

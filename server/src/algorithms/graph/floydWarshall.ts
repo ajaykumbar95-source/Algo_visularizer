@@ -1,5 +1,16 @@
 import type { TraceStep } from '../../types/index.js';
 
+/**
+ * Generates an execution trace for the Floyd-Warshall all-pairs shortest path algorithm.
+ * 
+ * @param adjList - The adjacency list of the weighted graph.
+ * @param nodes - An array of all node labels in the graph.
+ * @returns An array of TraceStep objects representing the algorithm's state at each step.
+ * 
+ * @complexity
+ * - Time: O(V³).
+ * - Space: O(V²) auxiliary.
+ */
 export function getFloydWarshallTrace(adjList: Record<string, { to: string; weight: number }[]>, nodes: string[]): TraceStep[] {
   const steps: TraceStep[] = [];
   const V = nodes.length;
@@ -52,10 +63,14 @@ export function getFloydWarshallTrace(adjList: Record<string, { to: string; weig
         steps.push({
           activeLine: 8,
           variables: { k, i, j, dIK, dKJ, dIJ },
-          description: `Checking if i->k->j (${i}->${k}->${j}) is shorter than i->j (${i}->${j})`,
+          description: `Checking if ${i}->${k}->${j} is shorter than ${i}->${j}`,
           current: k,
           activeEdge: { from: i, to: j },
-          distances: {}
+          distances: { 
+            [`${i}->${j}`]: dIJ ?? Infinity, 
+            [`${i}->${k}`]: dIK ?? Infinity, 
+            [`${k}->${j}`]: dKJ ?? Infinity 
+          }
         });
 
         if (dIK !== Infinity && dKJ !== Infinity && (dIK as number) + (dKJ as number) < (dIJ as number)) {
@@ -66,7 +81,7 @@ export function getFloydWarshallTrace(adjList: Record<string, { to: string; weig
             description: `Updated distance ${i}->${j} to ${dist[i]![j]}`,
             current: k,
             activeEdge: { from: i, to: j },
-            distances: {}
+            distances: { [`${i}->${j}`]: dist[i]![j] as number }
           });
         }
       }

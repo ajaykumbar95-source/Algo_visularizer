@@ -1,121 +1,248 @@
-# 🔬 AlgoVisual Laboratory
+# AlgoVisual Laboratory
 
-A high-performance, interactive algorithm visualization platform designed to help students and developers master data structures and algorithms through step-by-step trace generation and real-time visual feedback.
-
-## 🚀 Key Features
-
-### Core Functionality
-- **FR-01 Algorithm Selection**: Choose from 12+ supported Sorting and Graph algorithms (Bubble, Quick, Dijkstra, BFS, DFS, etc.).
-- **FR-02 Custom Input**: Enter your own numeric arrays or graph data to visualize specific edge cases.
-- **FR-03 Trace Generation**: Advanced backend engine calculates full execution traces before visualization begins.
-- **FR-04 Step Navigation**: Granular control to move forward or backward through every single step of the algorithm.
-- **FR-05 Auto-Play**: Hands-free visualization with adjustable playback speed.
-- **FR-10 Input Validation**: Intelligent rejection of invalid data with clear, user-friendly error messages.
-
-### Educational Insights
-- **FR-06 Pseudocode Sync**: Real-time highlighting of the active pseudocode line for every step.
-- **FR-07 Complexity Info**: Instant access to Time (Best/Average/Worst) and Space complexity for all algorithms.
-- **FR-08 Variable Panel**: Live snapshots of internal variables (pointers, counters, distances) as they change.
-- **FR-09 Speed Control**: Adjustable animation speeds from 0.5x to 4x.
-
-### User & Admin Management
-- **User Accounts**: Secure Login and Signup system to save personal visualization history.
-- **Admin Dashboard**: Comprehensive management interface for administrators to oversee users and their activity.
-- **Global History**: Track and revisit previous algorithm executions for comparative learning.
-
-## 🛠️ Technology Stackflowchart TD
-  U[User] -->|selects algorithm / inputs data| F[Frontend React App]
-  F -->|POST /api/trace
-  {algorithmId, input}| S[Backend Express API]
-  S -->|calls| A[Trace Engine]
-  A -->|generates JSON step trace| S
-  S -->|returns trace data| F
-  F -->|renders visualization
-  {steps, pseudocode, state}| V[Sorting/Graph Visualizer]
-  F -->|POST /api/auth/login
-  {credentials}| S
-  S -->|verify JWT / bcrypt| DB[Database / Prisma]
-  S -->|issue JWT| F
-  F -->|GET /api/history| S
-  S -->|fetch history| DB
-  DB -->|history records| S
-  S -->|return history| F
-  subgraph Frontend
-    F
-    V
-  end
-  subgraph Backend
-    S
-    A
-  end
-  subgraph Data Layer
-    DB
-  end
-  classDef service fill:#f9f,stroke:#333,stroke-width:1px;
-  class F,S,A,DB service;
-
-| Component | Technology |
-| :--- | :--- |
-| **Frontend** | React.js (TypeScript), Tailwind CSS, Framer Motion |
-| **Backend** | Node.js (Express), TypeScript, JWT Authentication |
-| **Database** | SQLite with Prisma ORM |
-| **API Style** | RESTful JSON API |
-
-## 📐 Software Process Model: Agile (Iterative)
-
-The laboratory was developed using an **Agile/Iterative** approach to ensure high quality and flexibility:
-- **Iterative Refinement**: Complex visualizers were built incrementally, allowing for fine-tuning of animation physics and UI responsiveness.
-- **Contract-Driven**: A shared type definition system ensures seamless integration between the Node.js backend and React frontend.
-- **Continuous Integration**: Concurrent development of client and server allowed for immediate identification and resolution of integration issues.
-
-## 🏁 Getting Started
-
-### Prerequisites
-- Node.js (v18+)
-- npm or yarn
-### 🔑 Environment Variables
-
-The application requires several environment variables to be set up. A template is provided in [.env.example](file:///Users/shree/Desktop/algo_visualiser/.env.example).
-
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `PORT` | The port the backend server will run on | `5001` |
-| `JWT_SECRET` | Secret key for signing JSON Web Tokens | `your-secret-key` |
-| `DATABASE_URL` | Prisma database connection string | `file:../dev.db` |
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd algo_visualiser
-   ```
-
-2. **Setup Environment Files**
-   Copy the example environment file to the `server` and `database` directories:
-   ```bash
-   cp .env.example server/.env
-   cp .env.example database/.env
-   ```
-   *Note: Ensure `DATABASE_URL` in `database/.env` points correctly to your database file.*
-
-3. **Setup the Backend**
-   ```bash
-   cd server
-   npm install
-   npx prisma db push
-   npx prisma generate
-   npm run dev
-   ```
-
-4. **Setup the Frontend**
-   ```bash
-   cd client
-   npm install
-   npm run dev
-   ```
-
-The application will be available at `http://localhost:5173`.
+> An interactive algorithm visualization platform with step-by-step animations, built with **React + TypeScript** (frontend) and **Express + Prisma** (backend).
 
 ---
-*Developed as a modern laboratory for algorithm exploration.*
+
+## ✨ Features
+
+- 🎬 **Step-by-step playback** — play, pause, rewind, jump to any step
+- 📊 **Sorting visualizer** — animated bars with glow effects for compare/swap/sorted states
+- 🕸️ **Graph visualizer** — SVG-based circular layout with animated edge traversal
+- 📜 **Pseudocode sync** — active line highlighted in real time as the algorithm runs
+- 🔍 **State inspector** — live variable watch panel showing algorithm internals
+- 📋 **Execution log** — clickable step history panel; click any entry to jump directly to it
+- ⌨️ **Keyboard shortcuts** — Space (play/pause), Arrow keys (step), Shift+Arrow (jump to start/end)
+- 🎨 **4 themes** — Midnight, Cyberpunk, Forest, Deep Sea
+- 🌐 **4 background patterns** — Mesh, Grid, Dots, Solid
+- ⚡ **Server-side trace generation** — algorithm logic runs on the backend for consistency and security
+
+---
+
+## 🗂️ Project Structure
+
+```
+algorithm-visualiser/
+├── client/                         # React + TypeScript frontend (Vite)
+│   └── src/
+│       ├── algorithms/             # Algorithm metadata & pseudocode (client-side)
+│       ├── components/
+│       │   ├── layout/
+│       │   │   ├── TopBar.tsx      # Playback controls, speed, theme & background switchers
+│       │   │   ├── MainCanvas.tsx  # Animated step badge + visualizer viewport
+│       │   │   ├── Sidebar.tsx     # Algorithm browser with search
+│       │   │   ├── RightPanel.tsx  # Pseudocode, state variables, complexity
+│       │   │   ├── StepLog.tsx     # Clickable execution history log
+│       │   │   └── ErrorBoundary.tsx
+│       │   ├── visualizers/
+│       │   │   ├── SortingVisualizer.tsx   # Bar chart with spring animations
+│       │   │   └── GraphVisualizer.tsx     # SVG graph with animated edges/nodes
+│       │   └── ui/
+│       │       ├── Button.tsx
+│       │       └── ShortcutModal.tsx
+│       ├── context/
+│       │   └── ThemeContext.tsx    # Theme + background pattern state (persisted)
+│       ├── hooks/
+│       │   └── useIsMobile.ts
+│       ├── types/index.ts          # Shared TypeScript types
+│       ├── utils/cn.ts             # Tailwind class merger
+│       ├── config.ts               # API base URL
+│       ├── App.tsx                 # Root component & playback engine
+│       └── index.css               # Tailwind + CSS variables + glass styles
+│
+├── server/                         # Express + TypeScript backend
+│   └── src/
+│       ├── algorithms/
+│       │   ├── sorting/            # Bubble, Insertion, Selection, Heap, Merge, Quick Sort
+│       │   └── graph/              # BFS, DFS, Dijkstra, Kruskal, Bellman-Ford, Floyd-Warshall
+│       ├── controllers/
+│       │   └── traceController.ts  # Dispatches trace generation per algorithm
+│       ├── routes/
+│       │   └── traceRoutes.ts      # POST /api/trace (rate limited)
+│       ├── schemas/
+│       │   └── traceSchema.ts      # Zod input validation
+│       ├── types/index.ts          # TraceStep & related types
+│       ├── utils/
+│       │   ├── logger.ts           # Pino structured logger
+│       │   └── redis.ts            # Optional Redis caching client
+│       ├── db.ts                   # Prisma client singleton
+│       └── index.ts                # Express app entry point
+│
+├── database/
+│   └── prisma/
+│       ├── schema.prisma           # MySQL schema
+│       └── migrations/             # SQL migration history
+│
+├── .env.example                    # Environment variable template
+├── .gitignore
+└── README.md
+```
+
+---
+
+## 🧩 Supported Algorithms
+
+### Sorting
+| Algorithm      | Time Complexity       | Space |
+|----------------|-----------------------|-------|
+| Bubble Sort    | O(n²)                 | O(1)  |
+| Insertion Sort | O(n²)                 | O(1)  |
+| Selection Sort | O(n²)                 | O(1)  |
+| Heap Sort      | O(n log n)            | O(1)  |
+| Merge Sort     | O(n log n)            | O(n)  |
+| Quick Sort     | O(n log n) avg        | O(log n) |
+
+### Graph
+| Algorithm       | Time Complexity  | Use Case                    |
+|-----------------|------------------|-----------------------------|
+| BFS             | O(V + E)         | Shortest path (unweighted)  |
+| DFS             | O(V + E)         | Cycle detection / topology  |
+| Dijkstra        | O(E + V log V)   | Shortest path (weighted)    |
+| Kruskal's       | O(E log E)       | Minimum Spanning Tree       |
+| Bellman-Ford    | O(VE)            | Negative weight edges       |
+| Floyd-Warshall  | O(V³)            | All-pairs shortest path     |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** 18+
+- **XAMPP** installed and running (Apache + MySQL)
+
+---
+
+### Step 1 — Database Setup
+
+1. Open **XAMPP Control Panel** → Start **Apache** and **MySQL**
+2. Open **phpMyAdmin** → `http://localhost/phpmyadmin`
+3. Click **New** → create a database named `algo_visualiser`
+4. Set collation to `utf8mb4_unicode_ci` → click **Create**
+
+---
+
+### Step 2 — Environment File
+
+Copy the example env file to create your `.env`:
+
+```bash
+cp .env.example .env
+```
+
+The default `.env` works with XAMPP's default (no password):
+
+```env
+PORT=5001
+JWT_SECRET=change_this_to_a_long_random_string
+DATABASE_URL="mysql://root:@localhost:3306/algo_visualiser?connection_limit=5"
+```
+
+> If you set a MySQL root password, update `DATABASE_URL` accordingly.
+
+---
+
+### Step 3 — Install Dependencies
+
+```bash
+# Root dependencies (Playwright / Prisma CLI)
+npm install
+
+# Server dependencies
+cd server && npm install && cd ..
+
+# Client dependencies
+cd client && npm install && cd ..
+```
+
+---
+
+### Step 4 — Run Database Migration
+
+```bash
+cd server
+npx prisma migrate deploy --schema=../database/prisma/schema.prisma
+cd ..
+```
+
+---
+
+### Step 5 — Run the App
+
+**Terminal 1 — Backend:**
+```bash
+cd server
+npm run dev
+```
+> Server starts at `http://localhost:5001`
+
+**Terminal 2 — Frontend:**
+```bash
+cd client
+npm run dev
+```
+> App opens at `http://localhost:5173`
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Key              | Action              |
+|------------------|---------------------|
+| `Space`          | Play / Pause        |
+| `→`              | Next step           |
+| `←`              | Previous step       |
+| `Shift + →`      | Jump to end         |
+| `Shift + ←`      | Jump to start       |
+| `?`              | Toggle shortcut help |
+
+---
+
+## 🏗️ Architecture Overview
+
+```
+Browser (React)
+    │
+    │  POST /api/trace  { algorithmId, inputData }
+    ▼
+Express Server
+    │
+    ├── Zod validation
+    ├── Redis cache lookup (optional)
+    ├── Algorithm trace generation (pure TypeScript)
+    └── Returns: { algorithmId, steps: TraceStep[] }
+                         │
+                         ▼
+              React playback engine
+          (timer loop, step by step rendering)
+```
+
+The **trace-based model** means all algorithm logic runs server-side. The frontend receives a pre-computed array of snapshots (`steps`) and replays them as an animation — ensuring correctness, consistency, and security.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer     | Technology                                     |
+|-----------|------------------------------------------------|
+| Frontend  | React 19, TypeScript, Vite, Tailwind CSS       |
+| Animation | Framer Motion                                  |
+| Icons     | Lucide React                                   |
+| Backend   | Node.js, Express, TypeScript                   |
+| Validation| Zod                                            |
+| ORM       | Prisma                                         |
+| Database  | MySQL (XAMPP)                                  |
+| Caching   | Redis (optional)                               |
+| Logging   | Pino                                           |
+
+---
+
+## 🔧 Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| Graph not rendering | Check the SVG `viewBox`; ensure nodes exist in `adjList` |
+| Trace not loading | Confirm the backend is running on port 5001 |
+| DB connection error | Make sure XAMPP MySQL is started and `DATABASE_URL` is correct |
+| Prisma client error | Run `npx prisma generate` inside the `server` directory |
+| CORS error | Verify frontend runs on `http://localhost:5173` |

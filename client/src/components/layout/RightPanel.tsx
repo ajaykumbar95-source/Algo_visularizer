@@ -1,122 +1,141 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Code2, Info, Activity } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Code2, Variable, Activity, Cpu } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 interface RightPanelProps {
   pseudocode: string[];
   activeLine: number;
-  variables: Record<string, any>;
+  variables: Record<string, unknown>;
+  complexity: { 
+    time: string; 
+    space: string; 
+  };
   queue?: string[];
   stack?: string[];
-  complexity: {
-    time: string;
-    space: string;
-  };
 }
 
 const RightPanel: React.FC<RightPanelProps> = ({
   pseudocode,
   activeLine,
   variables,
-  queue,
-  stack,
   complexity,
+  queue,
+  stack
 }) => {
   return (
-    <div className="w-80 border-l border-background-lighter bg-background-light flex flex-col h-screen overflow-hidden">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Pseudocode Section */}
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="p-4 flex items-center gap-2 border-b border-background-lighter shrink-0">
-            <Code2 size={16} className="text-primary" />
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Pseudocode</span>
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* Complexity Section */}
+      <div className="p-6 space-y-4">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-secondary/10 text-secondary border border-secondary/20 shadow-lg shadow-secondary/5">
+            <Activity size={18} />
           </div>
-          <div className="flex-1 overflow-y-auto p-4 bg-background/50 font-mono text-[13px] leading-relaxed">
-            {pseudocode.map((line, idx) => (
-              <div
-                key={idx}
-                className={cn(
-                  "px-3 py-0.5 rounded transition-all whitespace-pre",
-                  activeLine === idx 
-                    ? "bg-primary/20 text-white border-l-2 border-primary -ml-3 pl-2.5 shadow-sm" 
-                    : "text-slate-500 opacity-80"
-                )}
-              >
-                <span className="mr-4 text-slate-700 select-none inline-block w-4 text-right">{idx + 1}</span>
-                {line}
-              </div>
-            ))}
-          </div>
+          <h3 className="text-sm font-black text-white uppercase tracking-wider">Complexity</h3>
         </div>
-
-        {/* Variables Section */}
-        <div className="h-1/3 border-t border-background-lighter flex flex-col shrink-0">
-          <div className="p-4 flex items-center gap-2 border-b border-background-lighter shrink-0">
-            <Activity size={16} className="text-secondary" />
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Variables & State</span>
+        
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/20 transition-all group">
+            <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest block mb-1.5 group-hover:text-primary transition-colors">Time</span>
+            <span className="text-base font-black text-white group-hover:scale-105 transition-transform block">{complexity.time}</span>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {(queue || stack) && (
-              <div className="space-y-2">
-                <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{queue ? 'Queue (FIFO)' : 'Stack (LIFO)'}</div>
-                <div className="flex flex-wrap gap-1 p-2 rounded-lg bg-background border border-background-lighter min-h-[40px] items-center">
-                  {(queue || stack || []).map((val, i) => (
-                    <motion.div
-                      key={`${val}-${i}`}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="px-2 py-1 rounded bg-primary/20 border border-primary/30 text-xs font-mono text-primary font-bold"
-                    >
-                      {val}
-                    </motion.div>
-                  ))}
-                  {(queue || stack || []).length === 0 && (
-                    <span className="text-[10px] text-slate-600 italic">Empty</span>
-                  )}
-                </div>
-              </div>
-            )}
-            
-            <div className="grid grid-cols-2 gap-3">
-              {Object.entries(variables).map(([name, value]) => {
-                // Skip queue/stack as they are handled above
-                if (name === 'queue' || name === 'stack') return null;
-                
-                return (
-                  <div key={name} className="p-3 rounded-xl bg-background border border-background-lighter shadow-sm">
-                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">{name}</div>
-                    <div className="text-sm font-mono text-white truncate">
-                      {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {Object.keys(variables).length === 0 && !queue && !stack && (
-              <div className="text-center py-4 text-slate-600 italic text-sm">
-                No active state
-              </div>
-            )}
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/20 transition-all group">
+            <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest block mb-1.5 group-hover:text-secondary transition-colors">Space</span>
+            <span className="text-base font-black text-white group-hover:scale-105 transition-transform block">{complexity.space}</span>
           </div>
         </div>
       </div>
 
-      {/* Complexity Section */}
-      <div className="p-4 bg-background-light border-t border-background-lighter shrink-0">
-        <div className="flex items-center gap-2 mb-3">
-          <Info size={16} className="text-active" />
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Complexity</span>
+      <div className="h-px bg-white/5 mx-6" />
+
+      {/* Variables Section */}
+      <div className="p-6 flex-1 min-h-0 flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
+              <Variable size={18} />
+            </div>
+            <h3 className="text-sm font-black text-white uppercase tracking-wider">State</h3>
+          </div>
         </div>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 rounded-xl bg-background border border-background-lighter group hover:border-primary/30 transition-colors">
-            <span className="text-xs text-slate-500">Time Complexity</span>
-            <span className="text-xs font-mono font-bold text-white group-hover:text-primary transition-colors">{complexity.time}</span>
+
+        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
+          <AnimatePresence mode="popLayout">
+            {Object.entries(variables).map(([key, value]) => (
+              <motion.div
+                layout
+                key={key}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between group hover:bg-white/[0.05] transition-all"
+              >
+                <span className="text-[11px] font-black text-slate-500 uppercase tracking-tighter group-hover:text-primary-light transition-colors">{key}</span>
+                <span className="text-xs font-mono text-white bg-black/40 px-2.5 py-1 rounded-lg border border-white/10 shadow-inner">
+                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                </span>
+              </motion.div>
+            ))}
+            
+            {(queue || stack) && (
+              <motion.div
+                layout
+                className="mt-6 p-4 rounded-2xl bg-primary/5 border border-primary/20 space-y-3"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-black text-primary uppercase tracking-widest">{queue ? 'Queue' : 'Stack'}</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(queue || stack)?.map((item, i) => (
+                    <span key={i} className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-[11px] font-black text-white shadow-xl">
+                      {item}
+                    </span>
+                  ))}
+                  {(queue || stack)?.length === 0 && (
+                    <span className="text-[10px] text-slate-600 font-bold uppercase italic">Empty</span>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <div className="h-px bg-white/5 mx-6" />
+
+      {/* Pseudocode Section */}
+      <div className="p-6 flex-[1.5] min-h-0 flex flex-col">
+        <div className="flex items-center gap-2.5 mb-6">
+          <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-lg shadow-primary/5">
+            <Code2 size={18} />
           </div>
-          <div className="flex items-center justify-between p-3 rounded-xl bg-background border border-background-lighter group hover:border-secondary/30 transition-colors">
-            <span className="text-xs text-slate-500">Space Complexity</span>
-            <span className="text-xs font-mono font-bold text-white group-hover:text-secondary transition-colors">{complexity.space}</span>
+          <h3 className="text-sm font-black text-white uppercase tracking-wider">Pseudocode</h3>
+        </div>
+
+        <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/40 rounded-2xl border border-white/5 p-4 font-mono text-[11px] leading-relaxed relative group">
+          <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-100 transition-opacity">
+            <Cpu size={14} className="text-primary" />
           </div>
+          {pseudocode.map((line, idx) => (
+            <div
+              key={idx}
+              className={cn(
+                "py-1 px-3 rounded-lg transition-all duration-300 flex gap-4",
+                idx === activeLine 
+                  ? "bg-primary text-white shadow-lg shadow-primary/20 scale-[1.02] z-10" 
+                  : "text-slate-500"
+              )}
+            >
+              <span className={cn(
+                "shrink-0 w-4 opacity-30 text-right select-none",
+                idx === activeLine && "opacity-100 font-black"
+              )}>
+                {idx + 1}
+              </span>
+              <pre className="whitespace-pre-wrap break-all">{line}</pre>
+            </div>
+          ))}
         </div>
       </div>
     </div>

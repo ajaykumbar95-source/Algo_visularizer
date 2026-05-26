@@ -9,24 +9,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
     const variants = {
-      primary: 'bg-primary hover:bg-primary-dark text-white shadow-lg shadow-primary/20',
-      secondary: 'bg-background-lighter hover:bg-slate-600 text-white shadow-sm',
-      ghost: 'bg-transparent hover:bg-background-lighter text-slate-400 hover:text-white',
-      danger: 'bg-error hover:bg-red-600 text-white shadow-lg shadow-error/20',
+      primary: 'bg-primary hover:bg-primary-dark text-white shadow-lg shadow-primary/20 hover:shadow-primary/40',
+      secondary: 'bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20',
+      ghost: 'bg-transparent hover:bg-white/5 text-slate-500 hover:text-white',
+      danger: 'bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 shadow-lg shadow-red-500/10',
     };
 
     const sizes = {
-      sm: 'px-3 py-1.5 text-xs',
-      md: 'px-4 py-2 text-sm',
-      lg: 'px-6 py-3 text-base',
-      icon: 'p-2',
+      sm: 'px-3 py-1.5 text-[10px] font-black uppercase tracking-wider',
+      md: 'px-5 py-2.5 text-xs font-black uppercase tracking-widest',
+      lg: 'px-8 py-3.5 text-sm font-black uppercase tracking-widest',
+      icon: 'p-2.5',
     };
 
     return (
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed',
+          'inline-flex items-center justify-center rounded-2xl font-black transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0',
           variants[variant],
           sizes[size],
           className

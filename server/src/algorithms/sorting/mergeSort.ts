@@ -1,5 +1,15 @@
 import type { TraceStep } from '../../types/index.js';
 
+/**
+ * Generates an execution trace for the Merge Sort algorithm.
+ * 
+ * @param inputArray - The array of numbers to be sorted.
+ * @returns An array of TraceStep objects representing the algorithm's state at each step.
+ * 
+ * @complexity
+ * - Time: O(n log n) in all cases (best, average, worst).
+ * - Space: O(n) auxiliary.
+ */
 export function getMergeSortTrace(inputArray: number[]): TraceStep[] {
   const steps: TraceStep[] = [];
   const array = [...inputArray];

@@ -1,5 +1,16 @@
 import type { TraceStep } from '../../types/index.js';
 
+/**
+ * Generates an execution trace for the Depth-First Search (DFS) algorithm.
+ * 
+ * @param adjList - The adjacency list of the graph.
+ * @param startNode - The starting node for the algorithm.
+ * @returns An array of TraceStep objects representing the algorithm's state at each step.
+ * 
+ * @complexity
+ * - Time: O(V + E).
+ * - Space: O(V) auxiliary.
+ */
 export function getDFSTrace(adjList: Record<string, string[]>, startNode: string): TraceStep[] {
   const steps: TraceStep[] = [];
   const visited: string[] = [];

@@ -33,6 +33,17 @@ class DSU {
   }
 }
 
+/**
+ * Generates an execution trace for Kruskal's Minimum Spanning Tree (MST) algorithm.
+ * 
+ * @param adjList - The adjacency list of the weighted graph.
+ * @param nodes - An array of all node labels in the graph.
+ * @returns An array of TraceStep objects representing the algorithm's state at each step.
+ * 
+ * @complexity
+ * - Time: O(E log E) or O(E log V).
+ * - Space: O(V + E) auxiliary.
+ */
 export function getKruskalTrace(adjList: Record<string, { to: string; weight: number }[]>, nodes: string[]): TraceStep[] {
   const steps: TraceStep[] = [];
   const edges: Edge[] = [];

@@ -12,6 +12,16 @@ export interface Algorithm {
   pseudocode: string[];
 }
 
+export interface GraphEdge {
+  to: string;
+  weight: number;
+}
+
+export interface GraphInput {
+  adjList: Record<string, (string | GraphEdge)[]>;
+  startNode: string;
+}
+
 export interface TraceStep {
   // Sorting specific
   array?: number[];
@@ -31,7 +41,7 @@ export interface TraceStep {
   
   // Common
   activeLine: number;
-  variables: Record<string, any>;
+  variables: Record<string, string | number | boolean | null | undefined | object>;
   description: string;
 }
 
@@ -39,3 +49,14 @@ export interface TraceResponse {
   algorithmId: string;
   steps: TraceStep[];
 }
+
+import type { Request } from 'express';
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    username: string;
+    email: string;
+  };
+}
+

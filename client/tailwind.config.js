@@ -9,25 +9,50 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#3b82f6', // blue-500
-          dark: '#2563eb',    // blue-600
+          DEFAULT: 'rgb(var(--color-primary) / <alpha-value>)',
+          dark: 'rgb(var(--color-primary-dark) / <alpha-value>)',
+          light: 'rgb(var(--color-primary-light) / <alpha-value>)',
         },
         secondary: {
-          DEFAULT: '#8b5cf6', // violet-500
-          dark: '#7c3aed',    // violet-600
+          DEFAULT: 'rgb(var(--color-secondary) / <alpha-value>)',
+          dark: 'rgb(var(--color-secondary-dark) / <alpha-value>)',
+          light: 'rgb(var(--color-secondary-light) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
         },
         success: '#10b981',   // emerald-500
         active: '#f59e0b',    // amber-500
         error: '#ef4444',     // red-500
         background: {
-          DEFAULT: '#0f172a', // slate-900
-          light: '#1e293b',   // slate-800
-          lighter: '#334155', // slate-700
+          DEFAULT: 'rgb(var(--color-background) / <alpha-value>)',
+          dark: 'rgb(var(--color-background) / <alpha-value>)',
+          light: 'rgb(var(--color-background-light) / <alpha-value>)',
+          lighter: 'rgb(var(--color-background-lighter) / <alpha-value>)',
         }
       },
       fontFamily: {
-        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
+      animation: {
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'shimmer': 'shimmer 2s linear infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        },
+      },
+      boxShadow: {
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'glass-sm': '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
+      }
     },
   },
   plugins: [],

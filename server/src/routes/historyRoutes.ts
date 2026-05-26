@@ -1,10 +1,14 @@
 import { Router } from 'express';
-import { getHistory, saveHistory } from '../controllers/historyController.js';
-import { authMiddleware } from '../middleware/auth.js';
+import { getHistory, deleteHistoryItem, clearHistory } from '../controllers/historyController.js';
+import { requireAuth } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-router.get('/history', authMiddleware, getHistory);
-router.post('/history', authMiddleware, saveHistory);
+// Secure all history endpoints
+router.use(requireAuth);
+
+router.get('/', getHistory);
+router.delete('/:id', deleteHistoryItem);
+router.delete('/', clearHistory);
 
 export default router;

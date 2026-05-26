@@ -1,5 +1,15 @@
 import type { TraceStep } from '../../types/index.js';
 
+/**
+ * Generates an execution trace for the Insertion Sort algorithm.
+ * 
+ * @param inputArray - The array of numbers to be sorted.
+ * @returns An array of TraceStep objects representing the algorithm's state at each step.
+ * 
+ * @complexity
+ * - Time: O(n²) in worst and average cases, O(n) in best case.
+ * - Space: O(1) auxiliary.
+ */
 export function getInsertionSortTrace(inputArray: number[]): TraceStep[] {
   const steps: TraceStep[] = [];
   const array = [...inputArray];
