@@ -37,9 +37,9 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     if (existingUser) {
       if (existingUser.email === email.toLowerCase()) {
         res.status(409).json({ error: 'Email already registered' });
-        return;
+      } else {
+        res.status(409).json({ error: 'Username already taken' });
       }
-      res.status(409).json({ error: 'Username already taken' });
       return;
     }
 
@@ -58,13 +58,14 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
         id: true,
         username: true,
         email: true,
+        role: true,
         createdAt: true,
       },
     });
 
     // Generate token
     const token = jwt.sign(
-      { id: user.id, username: user.username, email: user.email },
+      { id: user.id, username: user.username, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -114,7 +115,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
     // Generate token
     const token = jwt.sign(
-      { id: user.id, username: user.username, email: user.email },
+      { id: user.id, username: user.username, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -129,6 +130,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
         id: user.id,
         username: user.username,
         email: user.email,
+        role: user.role,
         createdAt: user.createdAt,
       },
       token,
@@ -153,5 +155,16 @@ export const me = async (req: AuthRequest, res: Response): Promise<void> => {
     res.status(401).json({ error: 'Not authenticated' });
     return;
   }
-  res.json({ user: req.user });
+  // Get full user from DB to include role
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    }
+  });
+  res.json({ user });
 };

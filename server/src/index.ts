@@ -9,6 +9,7 @@ import { pinoHttp } from 'pino-http';
 import traceRoutes from './routes/traceRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import logger from './utils/logger.js';
 import { connectRedis } from './utils/redis.js';
 import prisma from './db.js';
@@ -47,6 +48,25 @@ app.use(cookieParser());
 app.use('/api', traceRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/history', historyRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Public route to get algorithms
+app.get('/api/algorithms', async (req, res) => {
+  try {
+    const algorithms = await prisma.algorithm.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json({
+      algorithms: (algorithms as any[]).map(algo => ({
+        ...algo,
+        pseudocode: JSON.parse(algo.pseudocode),
+      })),
+    });
+  } catch (error) {
+    logger.error({ error }, 'Failed to get algorithms');
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 // 6. Enhanced Health Endpoint

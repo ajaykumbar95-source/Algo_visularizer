@@ -62,11 +62,11 @@ const MainCanvas: React.FC<MainCanvasProps> = ({ children, title, description, s
 
       {/* Canvas area */}
       <div className="flex-1 p-8 pt-4 relative z-10 flex items-center justify-center min-h-0">
-        <div className="w-full h-full max-w-5xl glass-dark rounded-[2.5rem] p-8 flex items-center justify-center shadow-2xl relative group border border-white/10">
+        <div className="w-full h-full max-w-6xl glass-dark rounded-[2.5rem] p-8 shadow-2xl relative group border border-white/10 overflow-hidden">
           {/* Subtle inner glow */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[2.5rem]" />
           
-          <div className="relative z-10 w-full h-full flex items-center justify-center overflow-visible">
+          <div className="relative z-10 w-full h-full flex items-center justify-center">
             {children}
           </div>
         </div>

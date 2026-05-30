@@ -16,23 +16,49 @@ model HealthCheck {
   id String @id @default(uuid())
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id        String    @id @default(uuid())
   username  String    @unique
   email     String    @unique
   password  String
-  role      String    @default("USER")
+  role      UserRole  @default(USER)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   histories History[]
 }
 
+enum AlgorithmCategory {
+  SORTING
+  GRAPH
+}
+
+model Algorithm {
+  id          String            @id @default(uuid())
+  identifier  String            @unique
+  name        String
+  category    AlgorithmCategory
+  description String            @db.Text
+  timeComplexity  String?
+  spaceComplexity String?
+  pseudocode  String            @db.Text
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  histories   History[]
+}
+
 model History {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   algorithmId String
-  inputData   String   @db.Text
-  createdAt   DateTime @default(now())
+  algorithm   Algorithm @relation(fields: [algorithmId], references: [identifier], onDelete: Cascade)
+  inputData   String    @db.Text
+  createdAt   DateTime  @default(now())
 }
 

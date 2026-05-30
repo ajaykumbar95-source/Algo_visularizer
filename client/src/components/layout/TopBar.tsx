@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Play, Pause, ChevronLeft, ChevronRight, SkipBack, SkipForward, Sparkles, HelpCircle, User, LogOut, History, ChevronDown } from 'lucide-react';
+import { Play, Pause, ChevronLeft, ChevronRight, SkipBack, SkipForward, Sparkles, HelpCircle, LogOut, History, ChevronDown, ArrowLeft } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import Button from '../ui/Button';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface TopBarProps {
   isPlaying: boolean;
@@ -68,11 +69,18 @@ const TopBar: React.FC<TopBarProps> = ({
 }) => {
   const { theme, setTheme, bgPattern, setBgPattern } = useTheme();
   const { user, isAuthenticated, signOut } = useAuth();
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <div className="h-20 border-b border-white/10 bg-white/[0.03] backdrop-blur-3xl flex items-center justify-between px-8 shrink-0 z-20">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate('/')}
+          className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all"
+        >
+          <ArrowLeft size={20} />
+        </button>
         <div className="flex items-center gap-1.5 p-1.5 bg-black/60 border border-white/10 rounded-2xl shadow-inner">
           {/* Jump to start */}
           <Button variant="ghost" size="icon" onClick={onReset} disabled={!canGoPrev} title="Jump to Start" className="rounded-xl hover:bg-white/5">

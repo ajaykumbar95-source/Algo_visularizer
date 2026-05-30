@@ -44,7 +44,21 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  role: string;
   createdAt: string;
+}
+
+export interface Algorithm {
+  id: string;
+  identifier: string;
+  name: string;
+  category: 'SORTING' | 'GRAPH';
+  description: string;
+  timeComplexity: string;
+  spaceComplexity: string;
+  pseudocode: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface HistoryItem {

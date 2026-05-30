@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { User, HistoryItem } from '../types';
 import { API_BASE_URL } from '../config';
 
@@ -28,6 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUser = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
       });
       if (response.ok) {
@@ -50,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setHistoryLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/history`, {
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
       });
       if (response.ok) {
@@ -81,6 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await fetch(`${API_BASE_URL}/auth/signin`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ emailOrUsername, password }),
       });
@@ -102,6 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
       });
@@ -123,6 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await fetch(`${API_BASE_URL}/auth/signout`, {
         method: 'POST',
+        credentials: 'include',
       });
     } catch (err) {
       console.error('Sign out error:', err);
@@ -136,6 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await fetch(`${API_BASE_URL}/history/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
       if (response.ok) {
         setHistory(prev => prev.filter(item => item.id !== id));
@@ -149,6 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await fetch(`${API_BASE_URL}/history`, {
         method: 'DELETE',
+        credentials: 'include',
       });
       if (response.ok) {
         setHistory([]);

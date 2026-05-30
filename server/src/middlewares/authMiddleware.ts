@@ -2,6 +2,7 @@ import type { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import type { AuthRequest } from '../types/index.js';
 import logger from '../utils/logger.js';
+import prisma from '../db.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_change_this_in_production';
 
@@ -9,6 +10,7 @@ export interface JwtPayload {
   id: string;
   username: string;
   email: string;
+  role: string;
 }
 
 export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -29,6 +31,7 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
       id: decoded.id,
       username: decoded.username,
       email: decoded.email,
+      role: decoded.role,
     };
     next();
   } catch (error) {
@@ -45,5 +48,22 @@ export const requireAuth = async (req: AuthRequest, res: Response, next: NextFun
       return;
     }
     next();
+  });
+};
+
+export const requireAdmin = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  await requireAuth(req, res, async () => {
+    if (!req.user) return;
+    try {
+      const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+      if (!user || user.role !== 'ADMIN') {
+        res.status(403).json({ error: 'Admin privileges required' });
+        return;
+      }
+      next();
+    } catch (error) {
+      logger.error({ error }, 'Failed to check admin role');
+      res.status(500).json({ error: 'Internal server error' });
+    }
   });
 };
