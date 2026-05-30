@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Users, Activity, Code, ArrowLeft, Sparkles } from 'lucide-react';
+import { API_BASE_URL } from '../config.js';
 
 interface Algorithm {
   id: string;
@@ -63,7 +64,7 @@ const AdminPanel = () => {
 
   const loadAlgorithms = async () => {
     try {
-      const res = await fetch('http://localhost:5001/api/admin/algorithms', {
+      const res = await fetch(`${API_BASE_URL}/admin/algorithms`, {
         credentials: 'include'
       });
       const data = await res.json();
@@ -75,7 +76,7 @@ const AdminPanel = () => {
 
   const loadUsers = async () => {
     try {
-      const res = await fetch('http://localhost:5001/api/admin/users', {
+      const res = await fetch(`${API_BASE_URL}/admin/users`, {
         credentials: 'include'
       });
       const data = await res.json();
@@ -89,8 +90,8 @@ const AdminPanel = () => {
     e.preventDefault();
     try {
       const url = editingAlgorithm
-        ? `http://localhost:5001/api/admin/algorithms/${editingAlgorithm.id}`
-        : 'http://localhost:5001/api/admin/algorithms';
+        ? `${API_BASE_URL}/admin/algorithms/${editingAlgorithm.id}`
+        : `${API_BASE_URL}/admin/algorithms`;
       const method = editingAlgorithm ? 'PUT' : 'POST';
       
       const res = await fetch(url, {
@@ -121,7 +122,7 @@ const AdminPanel = () => {
   const handleDeleteAlgorithm = async (id: string) => {
     if (!confirm('Are you sure you want to delete this algorithm?')) return;
     try {
-      await fetch(`http://localhost:5001/api/admin/algorithms/${id}`, {
+      await fetch(`${API_BASE_URL}/admin/algorithms/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -134,7 +135,7 @@ const AdminPanel = () => {
   const handleDeleteUser = async (id: string) => {
     if (!confirm('Are you sure you want to delete this user?')) return;
     try {
-      await fetch(`http://localhost:5001/api/admin/users/${id}`, {
+      await fetch(`${API_BASE_URL}/admin/users/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -290,44 +291,50 @@ const AdminPanel = () => {
               <div>
                 <h2 className="text-2xl font-semibold text-white mb-6">User Management</h2>
                 
-                <div className="space-y-4">
-                  {(users || []).map((user) => (
-                    <div key={user.id} className="glass-dark rounded-xl p-6 border border-white/10">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-xl font-semibold text-white">{user.username}</h3>
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              user.role === 'ADMIN' 
-                                ? 'bg-primary/20 text-primary' 
-                                : 'bg-slate-500/20 text-slate-400'
-                            }`}>
-                              {user.role}
-                            </span>
+                {users.length === 0 ? (
+                  <div className="glass-dark rounded-xl p-8 border border-white/10 text-center">
+                    <p className="text-slate-400">No users found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {users.map((user) => (
+                      <div key={user.id} className="glass-dark rounded-xl p-6 border border-white/10">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-xl font-semibold text-white">{user.username}</h3>
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                user.role === 'ADMIN' 
+                                  ? 'bg-primary/20 text-primary' 
+                                  : 'bg-slate-500/20 text-slate-400'
+                              }`}>
+                                {user.role}
+                              </span>
+                            </div>
+                            <p className="text-slate-400 text-sm mb-2">{user.email}</p>
+                            <div className="flex items-center gap-6 text-xs text-slate-500">
+                              <span className="flex items-center gap-1">
+                                <Activity size={14} />
+                                {user._count.history} runs
+                              </span>
+                              <span>
+                                Joined: {new Date(user.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
                           </div>
-                          <p className="text-slate-400 text-sm mb-2">{user.email}</p>
-                          <div className="flex items-center gap-6 text-xs text-slate-500">
-                            <span className="flex items-center gap-1">
-                              <Activity size={14} />
-                              {user._count.history} runs
-                            </span>
-                            <span>
-                              Joined: {new Date(user.createdAt).toLocaleDateString()}
-                            </span>
-                          </div>
+                          {user.role !== 'ADMIN' && (
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-red-400"
+                            >
+                              <Trash2 size={20} />
+                            </button>
+                          )}
                         </div>
-                        {user.role !== 'ADMIN' && (
-                          <button
-                            onClick={() => handleDeleteUser(user.id)}
-                            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-red-400"
-                          >
-                            <Trash2 size={20} />
-                          </button>
-                        )}
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -2,6 +2,42 @@ import React, { useState } from 'react';
 import { Sparkles, Code, BarChart3, Network, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+// Simple animated algorithm visual components
+const SortingBars = () => (
+  <div className="flex items-end gap-1 h-24">
+    {[3, 5, 2, 7, 1, 4, 6].map((height, i) => (
+      <motion.div
+        key={i}
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: `${height * 20}px`, opacity: 1 }}
+        transition={{ delay: i * 0.1, repeat: Infinity, repeatType: 'reverse', duration: 1.5 }}
+        className="w-4 bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-lg shadow-lg shadow-blue-500/30"
+      />
+    ))}
+  </div>
+);
+
+const GraphNodes = () => (
+  <div className="relative h-32 w-40">
+    {[
+      { x: 20, y: 80 },
+      { x: 80, y: 20 },
+      { x: 140, y: 80 },
+      { x: 60, y: 120 },
+      { x: 120, y: 120 },
+    ].map((pos, i) => (
+      <motion.div
+        key={i}
+        initial={{ scale: 0, x: pos.x, y: pos.y }}
+        animate={{ scale: 1, x: pos.x, y: pos.y }}
+        transition={{ delay: i * 0.15, repeat: Infinity, repeatType: 'ping-pong', duration: 2 }}
+        className="absolute w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 shadow-lg shadow-cyan-500/40"
+      />
+    ))}
+  </div>
+);
 
 const LandingPage: React.FC = () => {
   const { signIn, signUp, isAuthenticated, user } = useAuth();
@@ -46,7 +82,54 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden">
+      {/* Animated floating elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          initial={{ x: -100, y: 100, rotate: 0 }}
+          animate={{ x: 50, y: 50, rotate: 10 }}
+          transition={{ duration: 6, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute top-16 left-16"
+        >
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-blue-500/20">
+            <SortingBars />
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ x: 100, y: -100, rotate: 0 }}
+          animate={{ x: -50, y: 50, rotate: -10 }}
+          transition={{ duration: 7, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute top-32 right-32"
+        >
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl shadow-cyan-500/20">
+            <GraphNodes />
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ x: 0, y: 0, rotate: 0 }}
+          animate={{ x: 30, y: -30, rotate: 15 }}
+          transition={{ duration: 8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute bottom-32 left-24"
+        >
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5 shadow-xl shadow-teal-500/20">
+            <SortingBars />
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ x: -50, y: 50, rotate: 0 }}
+          animate={{ x: 0, y: 0, rotate: -5 }}
+          transition={{ duration: 9, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute bottom-24 right-20"
+        >
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5 shadow-xl shadow-purple-500/20">
+            <GraphNodes />
+          </div>
+        </motion.div>
+      </div>
+
       <div className="relative z-10">
         <nav className="px-8 py-6 flex justify-between items-center">
           <div className="flex items-center gap-3">
