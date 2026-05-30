@@ -31,8 +31,8 @@ const GraphNodes = () => (
       <motion.div
         key={i}
         initial={{ scale: 0, x: pos.x, y: pos.y }}
-        animate={{ scale: 1, x: pos.x, y: pos.y }}
-        transition={{ delay: i * 0.15, repeat: Infinity, repeatType: 'ping-pong', duration: 2 }}
+        animate={{ scale: [0.8, 1.2, 0.8], x: pos.x, y: pos.y }}
+        transition={{ delay: i * 0.15, repeat: Infinity, duration: 2, ease: 'easeInOut' }}
         className="absolute w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 shadow-lg shadow-cyan-500/40"
       />
     ))}
