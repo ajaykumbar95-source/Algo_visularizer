@@ -16,6 +16,10 @@
 - 🎨 **4 themes** — Midnight, Cyberpunk, Forest, Deep Sea
 - 🌐 **4 background patterns** — Mesh, Grid, Dots, Solid
 - ⚡ **Server-side trace generation** — algorithm logic runs on the backend for consistency and security
+- 🔐 **Authentication** — sign in to save and view your algorithm run history
+- 📈 **Run History** — revisit and replay your past algorithm visualizations
+- 🛠️ **Admin Panel** — manage algorithms and users (admin-only)
+
 
 ---
 
